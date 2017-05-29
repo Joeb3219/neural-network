@@ -20,7 +20,45 @@
 
 (define train
   (lambda (numIterations)
+    (if (<= numIterations 0)
+      '()
+      (propogateIterationAndRetrain (car trainingData) numIterations)
+    )
+  )
+)
+
+(define propogateIterationAndRetrain
+  (lambda (set currentIteration)
+    (backPropogate set (forwardPropogate set)) (train (- currentIteration 1))
+  )
+)
+
+; Forward propogation works as such:
+; Given an input vector, we 
+(define forwardPropogate
+  (lambda (set)
+    (let (
+           (input (car set))
+           (output (car (cdr set)))
+          )
+      (display input) (display output) (newline)
+      1
+    )
+  )
+)
+
+(define backPropogate
+  (lambda (set realOutput)
     1
+  )
+)
+
+(define getEmptyResultsNet
+  (lambda (nodes)
+    (map
+      (lambda (a) (list a 0))
+      (getAllNodeIDs nodes)
+    )
   )
 )
 
@@ -35,4 +73,4 @@
 (addTrainingData '(0 1) '(0) )
 (addTrainingData '(0 0) '(0) )
 
-(train 10000)
+(train 1)

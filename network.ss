@@ -126,3 +126,21 @@
     )
   )
 )
+
+(define getAllNodeIDs
+  (lambda (nodes)
+    (if (null? nodes)
+        '()
+        (append (getAllNodeIDsFromLayer (car (cdr (car nodes)))) (getAllNodeIDs (cdr nodes)))
+    )
+  )
+)
+
+(define getAllNodeIDsFromLayer
+  (lambda (layer)
+    (if (null? layer)
+        '()
+        (cons (car layer) (getAllNodeIDsFromLayer (cdr layer)))
+    )
+  )
+)
