@@ -25,7 +25,8 @@
 )
 
 (define trainingData '())
-(define network (createNetwork 2 3 1))
+(define nodes (createNetwork 2 3 1))
+(define connections (createWeights nodes))
 
 ; Define all training data here in the format of:
 ; (addTrainingData '(inputs) '(outputs))

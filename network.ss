@@ -78,14 +78,12 @@
 
 (define randomlyWeightLayer
   (lambda (nodes layerID nextLayerID)
-    (display layerID) (display 'SPACE) (display nextLayerID) (newline)
     (randomlyWeightLayerHelper (car (cdr (getLayerById nodes layerID))) (car (cdr (getLayerById nodes nextLayerID))) )
   )
 )
 
 (define randomlyWeightLayerHelper
   (lambda (layerPairs nextLayerPairs)
-    (display layerPairs) (display 'space) (display nextLayerPairs) (newline)
     (if (null? layerPairs)
           '()
           (append (distributeNodeToLayer (car layerPairs) nextLayerPairs)
