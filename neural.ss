@@ -20,10 +20,11 @@
 
 (define train
   (lambda (numIterations)
-    (if (<= numIterations 0)
-      '()
-      (propogateIterationAndRetrain (car trainingData) numIterations)
-    )
+    (forwardPropogate (car trainingData))
+    ;(if (<= numIterations 0)
+    ;  '()
+    ;  (propogateIterationAndRetrain (car trainingData) numIterations)
+    ;)
   )
 )
 
@@ -51,7 +52,42 @@
 
 (define setInputs
   (lambda (input resultNet)
-    (
+    (map
+      (lambda (input nodeID)
+        (setResult resultNet nodeID input)
+      )
+      input
+      (getInputNodeIDs nodes)
+    )
+    resultNet
+  )
+)
+
+(define setResult
+  (lambda (results key value)
+    (map
+      (lambda (instance)
+        (if (eq? (car instance) key)
+            (set-cdr! instance value)
+            instance
+        )
+      )
+      results
+    )
+  )
+)
+
+(define addToResult
+  (lambda (results key value)
+    (map
+      (lambda (instance)
+        (if (eq? (car instance) key)
+            (set-cdr! instance (+ (cdr instance) value))
+            instance
+        )
+      )
+      results
+    )
   )
 )
 
@@ -61,16 +97,37 @@
   )
 )
 
+(define evaluateNode
+  (lambda (nodeID nodeValue resultNet)
+    (map
+      (lambda (connectionNode)
+        (let (
+               (start (car connectionNode))
+               (end (car (cdr connectionNode)))
+               (value (car (cdr (cdr connectionNode))))
+             )
+          (if (eq? start nodeID)
+              (addToResult resultNet end value); This is the correct node, so let's add its weight to the current node value
+              '() ; We aren't looking at the right start node, so return null.
+          )
+        )
+      )
+      connections
+    )
+    resultNet
+  )
+)
+
 (define backPropogate
-  (lambda (set realOutput)
-    1
+  (lambda (set resultNet)
+    resultNet
   )
 )
 
 (define getEmptyResultsNet
   (lambda (nodes)
     (map
-      (lambda (a) (list a 0))
+      (lambda (a) (cons a 0))
       (getAllNodeIDs nodes)
     )
   )
