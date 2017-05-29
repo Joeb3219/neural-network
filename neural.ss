@@ -91,8 +91,32 @@
   )
 )
 
+(define applyFunctionToNode
+  (lambda (results key function)
+    (map
+      (lambda (instance)
+        (if (eq? (car instance) key)
+            (set-cdr! instance (function (cdr instance)))
+            instance
+        )
+      )
+      results
+    )
+  )
+)
+
 (define evaluate
   (lambda (resultsNet)
+    (map
+      (lambda (resultNode)
+        (evaluateNode (car resultNode) (cdr resultNode) resultsNet)
+        (if (isInInputLayer? nodes (car resultNode))
+          '()
+          (applyFunctionToNode resultsNet (car resultNode) sigmoid)
+        )
+      )
+      resultsNet
+    )
     resultsNet
   )
 )
