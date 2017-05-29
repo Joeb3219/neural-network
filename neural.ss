@@ -34,7 +34,10 @@
 )
 
 ; Forward propogation works as such:
-; Given an input vector, we 
+; Given an input vector, we assign each of the indices to the first layer of the network.
+; We then, one by one, propogate each of the input nodes through the ENTIRE system, adding its result to the previous step.
+; Once all results have propogated, we apply a sigmoid function to every node except the input.
+; Most of these actions are done via a mapping function
 (define forwardPropogate
   (lambda (set)
     (let (

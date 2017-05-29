@@ -1,3 +1,5 @@
+(load "functions.ss")
+
 ; Holds the current nodeID to be used in creating network connections.
 (define currentNodeID 0)
 
@@ -141,6 +143,26 @@
     (if (null? layer)
         '()
         (cons (car layer) (getAllNodeIDsFromLayer (cdr layer)))
+    )
+  )
+)
+
+(define isInInputLayer?
+  (lambda (nodes id)
+    (let ((inputLayer (car (cdr (car nodes)))))
+      (if (null? inputLayer)
+        #f
+        (reduce
+          (lambda (a b)
+            (if (eq? a b)
+              b
+              #t
+            )
+          )
+          (map (lambda (a) (eq? a id)) inputLayer)
+          #f
+        )
+      )
     )
   )
 )
