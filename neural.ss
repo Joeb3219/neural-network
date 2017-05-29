@@ -30,7 +30,10 @@
 
 (define propogateIterationAndRetrain
   (lambda (set currentIteration)
-    (backPropogate set (forwardPropogate set)) (train (- currentIteration 1))
+    (if (<= currentIteration 0)
+      (backPropogate set (forwardPropogate set))
+      ((backPropogate set (forwardPropogate set)) (train (- currentIteration 1)))
+    )
   )
 )
 
@@ -112,7 +115,7 @@
         (evaluateNode (car resultNode) (cdr resultNode) resultsNet)
         (if (isInInputLayer? nodes (car resultNode))
           '()
-          (applyFunctionToNode resultsNet (car resultNode) sigmoid)
+          (applyFunctionToNode resultsNet (car resultNode) activationFunction)
         )
       )
       resultsNet
@@ -131,7 +134,7 @@
                (value (car (cdr (cdr connectionNode))))
              )
           (if (eq? start nodeID)
-              (addToResult resultNet end value); This is the correct node, so let's add its weight to the current node value
+              (addToResult resultNet end (* value nodeValue)); This is the correct node, so let's add its weight to the current node value
               '() ; We aren't looking at the right start node, so return null.
           )
         )
@@ -144,7 +147,19 @@
 
 (define backPropogate
   (lambda (set resultNet)
+;    (getDeltaErrors resultNet)
     resultNet
+  )
+)
+
+(define getDeltaErrors
+  (lambda (resultNet)
+    (map
+      (lambda (resultNode)
+        (display resultNode) (newline)
+      )
+      (reverse resultNet)
+    )
   )
 )
 
@@ -157,6 +172,8 @@
   )
 )
 
+(define activationFunction sigmoid)
+(define activationFunctionPrime sigmoidPrime)
 (define trainingData '())
 (define nodes (createNetwork 2 3 1))
 (define connections (createWeights nodes))
@@ -168,4 +185,4 @@
 (addTrainingData '(0 1) '(0) )
 (addTrainingData '(0 0) '(0) )
 
-(train 1)
+(train 10000)

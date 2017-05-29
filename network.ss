@@ -184,3 +184,9 @@
     )
   )
 )
+
+(define getLayerError
+  (lambda (nodes results expectedOutput layerID)
+    1
+  )
+)
