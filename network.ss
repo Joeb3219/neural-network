@@ -147,6 +147,24 @@
   )
 )
 
+(define getInputNodeIDs
+  (lambda (nodes)
+    (reverse (cdr
+      (reduce
+        (lambda (a b)
+          (if (isInInputLayer? nodes a)
+            (append b (cons a '()))
+            b
+          )
+        )
+        (getAllNodeIDs nodes)
+        '(a)
+      )
+    )
+    )
+  )
+)
+
 (define isInInputLayer?
   (lambda (nodes id)
     (let ((inputLayer (car (cdr (car nodes)))))

@@ -44,9 +44,20 @@
            (input (car set))
            (output (car (cdr set)))
           )
-      (display input) (display output) (newline)
-      1
+      (evaluate (setInputs input (getEmptyResultsNet nodes)))
     )
+  )
+)
+
+(define setInputs
+  (lambda (input resultNet)
+    (
+  )
+)
+
+(define evaluate
+  (lambda (resultsNet)
+    resultsNet
   )
 )
 
