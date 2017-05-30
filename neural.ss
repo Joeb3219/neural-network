@@ -163,11 +163,12 @@
 (define getCorrectedWeightsOutput
   (lambda (set resultNet)
     (let ((layerError (getLayerError resultNet (car (cdr set)) 2) ))
-      (display "LayerError: ") (display layerError) (newline)
       (map
         (lambda (nodeID)
-          (display nodeID) (display " => ") (display (getInboundWeightSum nodeID)) (newline)
-          (activationFunctionPrime (getInboundWeightSum nodeID))
+          (cons
+            nodeID
+            (* (activationFunctionPrime (getInboundWeightSum nodeID)) (reduce (lambda (a b) (if (eq? (car a) nodeID) (cdr a) b)) layerError 0 ) )
+          )
         )
         (getAllNodeIDsFromLayerID 2)
       )
