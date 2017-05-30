@@ -150,7 +150,7 @@
           )
       (let ((correctedOutputWeights (getCorrectedWeightsOutput set resultNet)))
         (let ((correctedHiddenWeights (getCorrectedWeightsHidden correctedOutputWeights resultNet)))
-          (let ((correctedInputtWeights (getCorrectedWeightsInput set resultNet)))
+          (let ((correctedInputtWeights (getCorrectedWeightsInput correctedOutputWeights set resultNet)))
             (display "Output deltas: ") (display correctedOutputWeights) (newline)
             (display "Hidden deltas: ") (display correctedHiddenWeights) (newline)
             (display "Input deltas: ") (display correctedInputtWeights) (newline)
@@ -163,16 +163,43 @@
 )
 
 (define getCorrectedWeightsInput
-  (lambda (set resultNet)
-    (let ((layerError (getLayerError resultNet (car (cdr set)) 2) ))
+  (lambda (outputErrors hiddenDeltas resultNet)
+    (let* (
+            (outputID (car (car outputErrors)))
+            (deltaOutputSum (cdr (car outputErrors)))
+            (deltaHiddenSum (multListByScalar
+                              (map
+                                *
+                                (map
+                                  (lambda (nodeID)
+                                    (getConnectionWeight nodeID outputID)
+                                  )
+                                  (getAllNodeIDsFromLayerID 1)
+                                )
+                                (map activationFunctionPrime (getInboundWeights outputID))
+                              )
+                              deltaOutputSum
+                            )
+            )
+          )
+      (display "outputID: ") (display outputID) (display ", DOS: ") (display deltaOutputSum) (display ", DHS: ") (display deltaHiddenSum) (newline)
       (map
-        (lambda (nodeID)
-          (cons
-            nodeID
-            (* (activationFunctionPrime (getInboundWeightSum nodeID)) (reduce (lambda (a b) (if (eq? (car a) nodeID) (cdr a) b)) layerError 0 ) )
+        (lambda (exteriorNodeID)
+          (map
+            (lambda (nodeID)
+              (display "(") (display exteriorNodeID) (display ",") (display nodeID) (display ")") (newline)
+              (cons nodeID
+                (cons exteriorNodeID
+                  (cons 2
+                    '()
+                  )
+                )
+              )
+            )
+            (getAllNodeIDsFromLayerID 0)
           )
         )
-        (getAllNodeIDsFromLayerID 2)
+        (getAllNodeIDsFromLayerID 1)
       )
     )
   )
@@ -188,7 +215,13 @@
           ; (display nodeID) (display " -> ") (display (getNetValue resultNet nodeID)) (display ": ") (display (* deltaOutputSum (getNetValue resultNet nodeID))) (newline)
           (cons
             nodeID
-            (* deltaOutputSum (getNetValue resultNet nodeID))
+            (cons
+              (car (car outputErrors))
+              (cons
+                (* deltaOutputSum (getNetValue resultNet nodeID))
+                '()
+              )
+            )
           )
         )
         (getAllNodeIDsFromLayerID 1)

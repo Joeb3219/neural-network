@@ -226,15 +226,21 @@
 
 (define getInboundWeightSum
   (lambda (nodeID)
+    (reduce + (getInboundWeights nodeID) 0)
+  )
+)
+
+(define getInboundWeights
+  (lambda (nodeID)
     (reduce
       (lambda (a b)
         (if (eq? (car (cdr a)) nodeID)
-          (+ b (car (cdr (cdr a))))
+          (append b (cons (car (cdr (cdr a))) '()))
           b
         )
       )
       connections
-      0
+      '()
     )
   )
 )
@@ -247,6 +253,21 @@
       )
       (getAllNodeIDsFromLayerID layerID)
       expectedOutput
+    )
+  )
+)
+
+(define getConnectionWeight
+  (lambda (start end)
+    (reduce
+      (lambda (a b)
+        (if (and (eq? (car a) start) (eq? (car (cdr a)) end))
+          (car (cdr (cdr a)))
+          b
+        )
+      )
+      connections
+      0
     )
   )
 )
