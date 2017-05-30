@@ -184,13 +184,15 @@
           )
       (display "outputID: ") (display outputID) (display ", DOS: ") (display deltaOutputSum) (display ", DHS: ") (display deltaHiddenSum) (newline)
       (map
-        (lambda (exteriorNodeID)
+        (lambda (exteriorNodeID hiddenSum)
           (map
             (lambda (nodeID)
-              (display "(") (display exteriorNodeID) (display ",") (display nodeID) (display ")") (newline)
-              (cons nodeID
-                (cons exteriorNodeID
-                  (cons 2
+              (cons
+                nodeID
+                (cons
+                  exteriorNodeID
+                  (cons
+                    (* (getNetValue resultNet nodeID) hiddenSum)
                     '()
                   )
                 )
@@ -200,6 +202,7 @@
           )
         )
         (getAllNodeIDsFromLayerID 1)
+        deltaHiddenSum
       )
     )
   )
