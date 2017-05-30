@@ -148,18 +148,29 @@
            (input (car set))
            (output (car (cdr set)))
           )
-      resultNet
+      (let ((correctedOutputWeights (getCorrectedWeightsOutput set resultNet)))
+        (let ((correctedHiddenWeights (getCorrectedWeightsOutput set resultNet)))
+          (let ((correctedInputtWeights (getCorrectedWeightsOutput set resultNet)))
+            (display correctedOutputWeights)
+            resultNet
+          )
+        )
+      )
     )
   )
 )
 
-(define getDeltaErrors
-  (lambda (resultNet)
-    (map
-      (lambda (resultNode)
-        (display resultNode) (newline)
+(define getCorrectedWeightsOutput
+  (lambda (set resultNet)
+    (let ((layerError (getLayerError resultNet (car (cdr set)) 2) ))
+      (display "LayerError: ") (display layerError) (newline)
+      (map
+        (lambda (nodeID)
+          (display nodeID) (display " => ") (display (getInboundWeightSum nodeID)) (newline)
+          (activationFunctionPrime (getInboundWeightSum nodeID))
+        )
+        (getAllNodeIDsFromLayerID 2)
       )
-      (reverse resultNet)
     )
   )
 )
@@ -178,4 +189,4 @@
 (addTrainingData '(0 0) '(0) )
 
 (define results (train 1))
-;(getLayerError results (car (cdr (car trainingData))) 2)
+(getLayerError results (car (cdr (car trainingData))) 2)

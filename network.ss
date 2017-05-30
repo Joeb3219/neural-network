@@ -224,6 +224,21 @@
   )
 )
 
+(define getInboundWeightSum
+  (lambda (nodeID)
+    (reduce
+      (lambda (a b)
+        (if (eq? (car (cdr a)) nodeID)
+          (+ b (car (cdr (cdr a))))
+          b
+        )
+      )
+      connections
+      0
+    )
+  )
+)
+
 (define getLayerError
   (lambda (results expectedOutput layerID)
     (map
