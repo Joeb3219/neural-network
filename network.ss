@@ -138,6 +138,21 @@
   )
 )
 
+(define getAllNodeIDsFromLayerID
+  (lambda (layerID)
+    (car (cdr (reduce
+      (lambda (a b)
+        (if (eq? (car a) layerID)
+            a
+            b
+        )
+      )
+      nodes
+      (car nodes)
+    )))
+  )
+)
+
 (define getAllNodeIDsFromLayer
   (lambda (layer)
     (if (null? layer)
@@ -185,8 +200,38 @@
   )
 )
 
+(define getNetValue
+  (lambda (net id)
+    (reduce
+      (lambda (a b)
+        (if (eq? (car a) id)
+          (cdr a)
+          b
+        )
+      )
+      net
+      0
+    )
+  )
+)
+
+(define getEmptyResultsNet
+  (lambda (nodes)
+    (map
+      (lambda (a) (cons a 0))
+      (getAllNodeIDs nodes)
+    )
+  )
+)
+
 (define getLayerError
-  (lambda (nodes results expectedOutput layerID)
-    1
+  (lambda (results expectedOutput layerID)
+    (map
+      (lambda (nodeID expected)
+        (cons nodeID (- expected (getNetValue results nodeID)) )
+      )
+      (getAllNodeIDsFromLayerID layerID)
+      expectedOutput
+    )
   )
 )

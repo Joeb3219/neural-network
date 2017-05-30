@@ -20,19 +20,16 @@
 
 (define train
   (lambda (numIterations)
-    (forwardPropogate (car trainingData))
-    ;(if (<= numIterations 0)
-    ;  '()
-    ;  (propogateIterationAndRetrain (car trainingData) numIterations)
-    ;)
+    (propogateIterationAndRetrain (car trainingData) numIterations)
+    
   )
 )
 
 (define propogateIterationAndRetrain
   (lambda (set currentIteration)
-    (if (<= currentIteration 0)
+    (if (> currentIteration 1)
+      (begin (backPropogate set (forwardPropogate set)) (train (- currentIteration 1)))
       (backPropogate set (forwardPropogate set))
-      ((backPropogate set (forwardPropogate set)) (train (- currentIteration 1)))
     )
   )
 )
@@ -147,8 +144,12 @@
 
 (define backPropogate
   (lambda (set resultNet)
-;    (getDeltaErrors resultNet)
-    resultNet
+    (let (
+           (input (car set))
+           (output (car (cdr set)))
+          )
+      resultNet
+    )
   )
 )
 
@@ -159,15 +160,6 @@
         (display resultNode) (newline)
       )
       (reverse resultNet)
-    )
-  )
-)
-
-(define getEmptyResultsNet
-  (lambda (nodes)
-    (map
-      (lambda (a) (cons a 0))
-      (getAllNodeIDs nodes)
     )
   )
 )
@@ -185,4 +177,5 @@
 (addTrainingData '(0 1) '(0) )
 (addTrainingData '(0 0) '(0) )
 
-(train 10000)
+(define results (train 1))
+;(getLayerError results (car (cdr (car trainingData))) 2)
