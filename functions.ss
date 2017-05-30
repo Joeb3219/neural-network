@@ -7,3 +7,20 @@
     )
   )
 )
+
+(define multListByScalar
+  (lambda (lst scalar)
+    (map
+      (lambda (a)
+        (* a scalar)
+      )
+      lst
+    )
+  )
+)
+
+(define average
+  (lambda (lst)
+    (/ (reduce + lst 0) (length lst))
+  )
+)

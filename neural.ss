@@ -149,12 +149,49 @@
            (output (car (cdr set)))
           )
       (let ((correctedOutputWeights (getCorrectedWeightsOutput set resultNet)))
-        (let ((correctedHiddenWeights (getCorrectedWeightsOutput set resultNet)))
-          (let ((correctedInputtWeights (getCorrectedWeightsOutput set resultNet)))
-            (display correctedOutputWeights)
+        (let ((correctedHiddenWeights (getCorrectedWeightsHidden correctedOutputWeights resultNet)))
+          (let ((correctedInputtWeights (getCorrectedWeightsInput set resultNet)))
+            (display "Output deltas: ") (display correctedOutputWeights) (newline)
+            (display "Hidden deltas: ") (display correctedHiddenWeights) (newline)
+            (display "Input deltas: ") (display correctedInputtWeights) (newline)
             resultNet
           )
         )
+      )
+    )
+  )
+)
+
+(define getCorrectedWeightsInput
+  (lambda (set resultNet)
+    (let ((layerError (getLayerError resultNet (car (cdr set)) 2) ))
+      (map
+        (lambda (nodeID)
+          (cons
+            nodeID
+            (* (activationFunctionPrime (getInboundWeightSum nodeID)) (reduce (lambda (a b) (if (eq? (car a) nodeID) (cdr a) b)) layerError 0 ) )
+          )
+        )
+        (getAllNodeIDsFromLayerID 2)
+      )
+    )
+  )
+)
+
+; TODO: Currently only considers one output node, and should be expanded to map output nodes to true input nodes.
+(define getCorrectedWeightsHidden
+  (lambda (outputErrors resultNet)
+    (let ((deltaOutputSum (cdr (car outputErrors))))
+      (display "Outputerror: ") (display deltaOutputSum) (newline)
+      (map
+        (lambda (nodeID)
+          ; (display nodeID) (display " -> ") (display (getNetValue resultNet nodeID)) (display ": ") (display (* deltaOutputSum (getNetValue resultNet nodeID))) (newline)
+          (cons
+            nodeID
+            (* deltaOutputSum (getNetValue resultNet nodeID))
+          )
+        )
+        (getAllNodeIDsFromLayerID 1)
       )
     )
   )
@@ -190,4 +227,5 @@
 (addTrainingData '(0 0) '(0) )
 
 (define results (train 1))
-(getLayerError results (car (cdr (car trainingData))) 2)
+
+(forwardPropogate  (car trainingData))
