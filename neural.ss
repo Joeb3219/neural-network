@@ -183,7 +183,7 @@
             )
           )
       (display "outputID: ") (display outputID) (display ", DOS: ") (display deltaOutputSum) (display ", DHS: ") (display deltaHiddenSum) (newline)
-      (map
+      (flattenInputDeltas (map
         (lambda (exteriorNodeID hiddenSum)
           (map
             (lambda (nodeID)
@@ -203,7 +203,7 @@
         )
         (getAllNodeIDsFromLayerID 1)
         deltaHiddenSum
-      )
+      ))
     )
   )
 )

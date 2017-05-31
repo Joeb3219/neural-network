@@ -24,3 +24,15 @@
     (/ (reduce + lst 0) (length lst))
   )
 )
+
+(define flattenInputDeltas
+  (lambda (lst)
+    (if (null? lst)
+        '()
+        (if (pair? (car lst))
+          (append (flattenInputDeltas (car lst)) (flattenInputDeltas (cdr lst))) 
+          (cons lst '())
+        )
+    )
+  )
+)
