@@ -272,6 +272,6 @@
 
 (define afterTraining (forwardPropogate  (car trainingData)))
 
-(display "Before training: ") (display beforeTraining) (newline)
-(display "Training: ") (display results) (newline)
-(display "After training: ") (display afterTraining) (newline)
+(prettyPrint "Before Training" beforeTraining)
+(prettyPrint "Training" results)
+(prettyPrint "After Training" afterTraining)

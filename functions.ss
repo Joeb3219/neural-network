@@ -36,3 +36,26 @@
     )
   )
 )
+
+(define prettyPrint
+  (lambda (text resultNet)
+    (let ((inputs (getAllNodeIDsFromLayerID 0)) (outputs (getAllNodeIDsFromLayerID 2)))
+      (display "===") (display text) (display "===") (newline)
+      (display "{")
+      (map
+        (lambda (nodeID)
+          (display (getNetValue resultNet nodeID)) (display ",")
+        )
+        inputs
+      )
+      (display "} => {")
+      (map
+        (lambda (nodeID)
+          (display (getNetValue resultNet nodeID)) (display ",")
+        )
+        outputs
+      )
+      (display "}") (newline) (newline)
+    )
+  )
+)
