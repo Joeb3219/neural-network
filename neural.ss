@@ -20,16 +20,27 @@
 
 (define train
   (lambda (numIterations)
-    (propogateIterationAndRetrain (car trainingData) numIterations)
+    (propogateIterationAndRetrain trainingData numIterations)
     
   )
 )
 
 (define propogateIterationAndRetrain
-  (lambda (set currentIteration)
+  (lambda (trainingData currentIteration)
     (if (> currentIteration 1)
-      (begin (backPropogate set (forwardPropogate set)) (train (- currentIteration 1)))
-      (backPropogate set (forwardPropogate set))
+      (begin (fullIteration trainingData) (train (- currentIteration 1)))
+      (fullIteration trainingData)
+    )
+  )
+)
+
+(define fullIteration
+  (lambda (trainingData)
+    (map
+      (lambda (set)
+        (backPropogate set (forwardPropogate set))
+      )
+      trainingData
     )
   )
 )
@@ -261,17 +272,31 @@
 
 ; Define all training data here in the format of:
 ; (addTrainingData '(inputs) '(outputs))
-(addTrainingData '(1 1) '(1) )
-(addTrainingData '(1 0) '(0) )
-(addTrainingData '(0 1) '(0) )
-(addTrainingData '(0 0) '(0) )
+; (addTrainingData '(1 1) '(1) )
+; (addTrainingData '(1 0) '(0) )
+; (addTrainingData '(0 1) '(0) )
+; (addTrainingData '(0 0) '(0) )
+
+(addTrainingData '(1 1) '(1))
+(addTrainingData '(2 2) '(1))
+(addTrainingData '(3 3) '(1))
+(addTrainingData '(4 4) '(1))
+
+(addTrainingData '(-1 -1) '(0))
+(addTrainingData '(-2 -2) '(0))
+(addTrainingData '(-3 -3) '(0))
+(addTrainingData '(-4 -4) '(0))
+
+
 
 (define beforeTraining (forwardPropogate  (car trainingData)))
 
-(define results (train 20000))
+(define results (train 1))
 
 (define afterTraining (forwardPropogate  (car trainingData)))
 
 (prettyPrint "Before Training" beforeTraining)
 (prettyPrint "Training" results)
 (prettyPrint "After Training" afterTraining)
+
+#t
