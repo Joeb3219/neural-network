@@ -215,6 +215,20 @@
   )
 )
 
+(define modifyConnectionWeight
+  (lambda (start end delta)
+    (map
+      (lambda (connection)
+        (if (and (eq? (car connection) start) (eq? (car (cdr connection)) end) )
+          (set-cdr! (cdr connection) (cons (+ delta (car (cdr (cdr connection)))) '()))
+          '()
+        )
+      )
+      connections
+    )
+  )
+)
+
 (define getEmptyResultsNet
   (lambda (nodes)
     (map

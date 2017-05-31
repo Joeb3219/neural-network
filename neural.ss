@@ -151,9 +151,16 @@
       (let ((correctedOutputWeights (getCorrectedWeightsOutput set resultNet)))
         (let ((correctedHiddenWeights (getCorrectedWeightsHidden correctedOutputWeights resultNet)))
           (let ((correctedInputtWeights (getCorrectedWeightsInput correctedOutputWeights set resultNet)))
-            (display "Output deltas: ") (display correctedOutputWeights) (newline)
-            (display "Hidden deltas: ") (display correctedHiddenWeights) (newline)
-            (display "Input deltas: ") (display correctedInputtWeights) (newline)
+            ;(display "Output deltas: ") (display correctedOutputWeights) (newline)
+            ;(display "Hidden deltas: ") (display correctedHiddenWeights) (newline)
+            ;(display "Input deltas: ") (display correctedInputtWeights) (newline)
+            ;(display "MERGING: ") (display (append correctedHiddenWeights correctedInputtWeights)) (newline)
+            (map
+              (lambda (connectionDelta)
+                (modifyConnectionWeight (car connectionDelta) (car (cdr connectionDelta)) (car (cdr (cdr connectionDelta))))
+              )
+              (append correctedHiddenWeights correctedInputtWeights)
+            )
             resultNet
           )
         )
@@ -182,7 +189,6 @@
                             )
             )
           )
-      (display "outputID: ") (display outputID) (display ", DOS: ") (display deltaOutputSum) (display ", DHS: ") (display deltaHiddenSum) (newline)
       (flattenInputDeltas (map
         (lambda (exteriorNodeID hiddenSum)
           (map
@@ -212,10 +218,8 @@
 (define getCorrectedWeightsHidden
   (lambda (outputErrors resultNet)
     (let ((deltaOutputSum (cdr (car outputErrors))))
-      (display "Outputerror: ") (display deltaOutputSum) (newline)
       (map
         (lambda (nodeID)
-          ; (display nodeID) (display " -> ") (display (getNetValue resultNet nodeID)) (display ": ") (display (* deltaOutputSum (getNetValue resultNet nodeID))) (newline)
           (cons
             nodeID
             (cons
@@ -262,6 +266,12 @@
 (addTrainingData '(0 1) '(0) )
 (addTrainingData '(0 0) '(0) )
 
-(define results (train 1))
+(define beforeTraining (forwardPropogate  (car trainingData)))
 
-(forwardPropogate  (car trainingData))
+(define results (train 20000))
+
+(define afterTraining (forwardPropogate  (car trainingData)))
+
+(display "Before training: ") (display beforeTraining) (newline)
+(display "Training: ") (display results) (newline)
+(display "After training: ") (display afterTraining) (newline)
